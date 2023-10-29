@@ -1,4 +1,3 @@
-import { StatusBar } from "expo-status-bar";
 import {
   FlatList,
   SafeAreaView,
@@ -29,7 +28,9 @@ export default function App() {
 
   const [number, setNumber] = useState("");
 
-  const [modelVisible, setModelVisible] = useState("")
+  const [status, setStatus] = useState("toDo");
+
+  const [modelVisible, setModelVisible] = useState("");
 
   const getData = async () => {
     try {
@@ -52,15 +53,14 @@ export default function App() {
   const AddItem = async () => {
     try {
       const taskArray = JSON.parse(await AsyncStorage.getItem("task")) || [];
-      taskArray.push({number, task, status});
+      taskArray.push({ number, task, status });
       await AsyncStorage.setItem("task", JSON.stringify(taskArray));
       setModelVisible(false);
       getData();
-    }
-    catch(error) {
+    } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return (
     <SafeAreaView style={s.container}>
@@ -76,6 +76,10 @@ export default function App() {
         </View>
 
         <FlatList data={data} renderItem={itemUi} />
+
+        <TouchableOpacity style={s.addBtn} onPress={() => setModelVisible(true)}>
+          <Icon name="add" size={60} color="#00f0ff" />
+        </TouchableOpacity>
       </ImageBackground>
 
       <Modal animationType="slide" transparent={true} visible={modelVisible}>
@@ -91,15 +95,19 @@ export default function App() {
               <TextInput style={s.textInput} onChange={setNumber}></TextInput>
               <TextInput style={s.textInput} onChange={setTask}></TextInput>
               <View style={s.btnrow}>
-
-                <TouchableOpacity style={[s.button, s.buttonClose]} onPress={() => setModelVisible(!modelVisible)}>
+                <TouchableOpacity
+                  style={[s.button, s.buttonClose]}
+                  onPress={() => setModelVisible(!modelVisible)}
+                >
                   <Text style={s.textStyle}>Cancel</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={[s.button, s.buttonSave]} onPress={AddItem}>
+                <TouchableOpacity
+                  style={[s.button, s.buttonSave]}
+                  onPress={AddItem}
+                >
                   <Text style={s.textStyle}>ADD</Text>
                 </TouchableOpacity>
-
               </View>
             </View>
           </View>
